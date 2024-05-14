@@ -7,4 +7,7 @@ Before running this project in your local machine, make sure you have the follow
 - Numpy library installed.
 - Matplotlib.pyplot library installed.
 - NeuralProphet library installed.
-- Python installed. 
+- Python installed.
+
+# Installation
+
