@@ -22,3 +22,4 @@ In order to install the libraries, use the pip install [library name] command in
 - Import the .csv to the Python script.
 - Specify the periods parameters, which dictates the amount of predictions that will be made. 
 
+**Note: Use various days of Dexcom Clarity data in order to obtain better and more precise results.** 
