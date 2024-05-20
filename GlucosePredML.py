@@ -1,9 +1,6 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from neuralprophet import NeuralProphet
-
-from datetime import datetime
 
 GlucoseTable = pd.read_csv(r'C:\Users\loren\Downloads\glucosevalues.csv')
 
@@ -20,18 +17,35 @@ GlucoseTable.pop('Source Device ID')
 GlucoseTable.pop('Event Subtype')
 GlucoseTable.pop('Insulin Value (u)')
 
+GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'] = GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].astype('string')
+GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'] = GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].str.replace('T', '')
+GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'] = GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].str[:10] + ' ' + GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].str[10:]
+
 GlucoseTable = GlucoseTable.dropna()
 
-GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'] = GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].astype("string")
-GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'] = GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].str.replace('T', '')
-
-GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'] = GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].str[:10] + ' ' + GlucoseTable['Timestamp (YYYY-MM-DDThh:mm:ss)'].str[10:]
-GlucoseTable.columns =['ds', 'y']
+GlucoseTable.columns = ['ds', 'y']
+GlucoseTable['ds'] = GlucoseTable['ds'].astype('datetime64[ns]')
 
 model = NeuralProphet()
 GlucoseValTest = model.fit(GlucoseTable)
 
-Future = model.make_future_dataframe(GlucoseTable, periods = 200)
+Future = model.make_future_dataframe(GlucoseTable, periods = 300)
 
-Forecast = model.predict(Future)
+FutureVals = model.predict(Future)
 
+Model_OriginalVals = model.predict(GlucoseTable)
+
+plt.title("Glucose Values (mg/dL) vs. Days")
+plt.xlabel("Days")
+plt.ylabel("Glucose Values (mg/dL)")
+plt.plot(GlucoseTable['ds'], GlucoseTable['y'], label = 'Original Glucose Values', c ='g')
+plt.plot(FutureVals['ds'], FutureVals['yhat1'], label = 'Future Glucose Values', c = 'r')
+plt.plot(Model_OriginalVals['ds'], Model_OriginalVals['yhat1'], label = 'ML Model Predicted Glucose Values', c = 'b')
+plt.legend(loc = 'lower right')
+
+window=plt.get_current_fig_manager()
+window.full_screen_toggle()
+
+plt.show()
+
+GlucoseTable.info()
