@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from neuralprophet import NeuralProphet
 
-GlucoseTable = pd.read_csv(r'C:\Users\loren\Downloads\glucosevalues.csv')
+GlucoseTable = pd.read_csv('glucosevalues.csv')
 
 GlucoseTable.pop('Index')
 GlucoseTable.pop('Transmitter ID')
@@ -43,9 +43,8 @@ plt.plot(FutureVals['ds'], FutureVals['yhat1'], label = 'Future Glucose Values',
 plt.plot(Model_OriginalVals['ds'], Model_OriginalVals['yhat1'], label = 'ML Model Predicted Glucose Values', c = 'b')
 plt.legend(loc = 'lower right')
 
-window=plt.get_current_fig_manager()
+window = plt.get_current_fig_manager()
 window.full_screen_toggle()
 
 plt.show()
 
-GlucoseTable.info()
