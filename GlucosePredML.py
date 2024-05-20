@@ -35,9 +35,9 @@ FutureVals = model.predict(Future)
 
 Model_OriginalVals = model.predict(GlucoseTable)
 
-plt.title("Glucose Values (mg/dL) vs. Days")
-plt.xlabel("Days")
-plt.ylabel("Glucose Values (mg/dL)")
+plt.title('Glucose Values (mg/dL) vs. Days')
+plt.xlabel('Days')
+plt.ylabel('Glucose Values (mg/dL)')
 plt.plot(GlucoseTable['ds'], GlucoseTable['y'], label = 'Original Glucose Values', c ='g')
 plt.plot(FutureVals['ds'], FutureVals['yhat1'], label = 'Future Glucose Values', c = 'r')
 plt.plot(Model_OriginalVals['ds'], Model_OriginalVals['yhat1'], label = 'ML Model Predicted Glucose Values', c = 'b')
