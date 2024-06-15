@@ -4,6 +4,6 @@ This Python script uses the Dexcom Overview Report csv file as its dataset, in o
 ### How it works?
 The script's model is currently under remodeling....
 ### Advisory on Usage
-This script gives its user's a general idea about their glucose levels, but it has its limitations. This predicter does not replace a professional's adivce, therefore, for more detailed and accurate information please visit your doctor. Furthermore, this script is not associated with the Dexcom company.
+This script gives its users a general idea about their glucose levels, but has its limitations. This predicter does not replace a professional's adivce, therefore, for more detailed and accurate information please visit your doctor. Furthermore, this script is not associated with the Dexcom company.
 ### Additional Notes
 The Dexcom Overview Report csv files contains confidential information with regards to a patient's glucose levels, therefore, beware before using the script for your own glucose levels, since the model uses said levels to form a prediction. 
