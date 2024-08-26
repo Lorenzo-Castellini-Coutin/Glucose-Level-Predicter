@@ -1,20 +1,17 @@
-#Author: Lorenzo Castellini Coutin
-
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 import xgboost as xgb
 
-GlucoseTable = pd.read_csv()   
+GlucoseTable = pd.read_csv('GlucoseVals.csv')   
 
-columns_delete = [
+columns_to_be_deleted = [
     'Index', 'Transmitter ID', 'Transmitter Time (Long Integer)', 'Glucose Rate of Change (mg/dL/min)','Carb Value (grams)', 'Event Type',
     'Patient Info', 'Duration (hh:mm:ss)', 'Device Info', 'Source Device ID', 'Event Subtype', 'Insulin Value (u)'
 ]
 
-GlucoseTable = GlucoseTable.drop(columns = columns_delete)
+GlucoseTable = GlucoseTable.drop(columns = columns_to_be_deleted)
 
 GlucoseTable.columns = ['Dates', 'GlucoseLvls']    
 
@@ -31,23 +28,27 @@ GlucoseTable = GlucoseTable.dropna()
 GlucoseTable['GlucoseLvls'] = GlucoseTable['GlucoseLvls'].astype('float')
 GlucoseTable['Dates'] = GlucoseTable['Dates'].astype('datetime64[ns]')
 
-def lag_features(df, lags): 
-    df_lagged = df.copy()
-    for lag in lags:
-        df_lagged[f'lag_{lag}'] = df_lagged['GlucoseLvls'].shift(lag)
-    return df_lagged
 
-lags_num = [1, 2, 3, 4, 5, 6, 7]  
-GlucoseTable = lag_features(GlucoseTable, lags_num)
+def lag_features_implementation(df, lags): 
+    
+    #Lag feature uses the previous glucose val, and shifts it into a column called lag #1, 2, n which helps predict our target glucose val
+    #In this case, we are using 7 data points to help us predict one
+
+    df_with_lags = df.copy()
+    for lag in lags:
+        df_with_lags[f'Lag #{lag}'] = df_with_lags['GlucoseLvls'].shift(lag)
+    return df_with_lags
+
+num_of_lags = [1, 2, 3, 4, 5, 6, 7]  
+
+
+GlucoseTable = lag_features_implementation(GlucoseTable, num_of_lags)
 GlucoseTable = GlucoseTable.dropna()
 
-# Split data into features and target
-X = GlucoseTable[['lag_' + str(lag) for lag in lags_num]]
+X = GlucoseTable[['Lag #' + str(lag) for lag in num_of_lags]]    #selects the lag columns and adds it to the df
 Y = GlucoseTable['GlucoseLvls']
 
-
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=.1, shuffle = False)
-
 
 model = xgb.XGBRegressor(
     objective='reg:squarederror', 
@@ -59,17 +60,15 @@ model = xgb.XGBRegressor(
     subsample = 0.7,
     n_estimators = 70
 )
+
 model.fit(X_train, y_train)
 
-
 y_pred = model.predict(X_test)
-
 
 mae = mean_absolute_error(y_test, y_pred)
 print(f'Mean Absolute Error: {mae}')
 
-
-plt.plot(GlucoseTable['Dates'].iloc[-len(y_pred):], y_pred, label='Predicted Values', color='red')
+plt.plot(GlucoseTable['Dates'], y_pred, label='Predicted Values', color='red')
 plt.plot(GlucoseTable['Dates'], GlucoseTable['GlucoseLvls'], label = '', color = 'blue')
 plt.xlabel('Dates (Year-Month-Day)')
 plt.ylabel('Glucose Values (mg/dL)')
@@ -79,6 +78,14 @@ plt.grid(True)
 window = plt.get_current_fig_manager()
 window.full_screen_toggle()
 plt.show()
+
+
+#Todo features:
+#Need to create future dates.
+#Test the future vals with graphs we have of said future vals.
+
+
+
 
 
 #Author: Lorenzo Castellini Coutin
