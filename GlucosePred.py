@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 import xgboost as xgb
+from datetime import datetime, timedelta
 
 GlucoseTable = pd.read_csv('GlucoseVals.csv')   
 
@@ -65,10 +66,20 @@ model.fit(X_train, y_train)
 
 y_pred = model.predict(X_test)
 
+prediction_len = len(y_pred)
+
+time_difference = timedelta(minutes = 5)
+
+final_old_date = GlucoseTable['Dates'].max()
+
+future_dates = [final_old_date + i * time_difference for i in range(1, prediction_len + 1)]
+
 mae = mean_absolute_error(y_test, y_pred)
 print(f'Mean Absolute Error: {mae}')
 
-plt.plot(GlucoseTable['Dates'], y_pred, label='Predicted Values', color='red')
+print(future_dates)
+
+plt.plot(future_dates, y_pred, label='Predicted Values', color='red')
 plt.plot(GlucoseTable['Dates'], GlucoseTable['GlucoseLvls'], label = '', color = 'blue')
 plt.xlabel('Dates (Year-Month-Day)')
 plt.ylabel('Glucose Values (mg/dL)')
@@ -81,7 +92,6 @@ plt.show()
 
 
 #Todo features:
-#Need to create future dates.
 #Test the future vals with graphs we have of said future vals.
 
 
