@@ -77,8 +77,6 @@ future_dates = [final_old_date + i * time_difference for i in range(1, predictio
 mae = mean_absolute_error(y_test, y_pred)
 print(f'Mean Absolute Error: {mae}')
 
-print(future_dates)
-
 plt.plot(future_dates, y_pred, label='Predicted Values', color='red')
 plt.plot(GlucoseTable['Dates'], GlucoseTable['GlucoseLvls'], label = '', color = 'blue')
 plt.xlabel('Dates (Year-Month-Day)')
@@ -92,7 +90,7 @@ plt.show()
 
 
 #Todo features:
-#Test the future vals with graphs we have of said future vals.
+#Test the future vals with graphs we have of said future vals to see the accuracy.
 
 
 
